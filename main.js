@@ -138,14 +138,14 @@ class CRMApp {
   addAdvancedMicroInteractions() {
     // Enhanced ripple effect for buttons
     document.addEventListener('click', (e) => {
-      if (e.target.matches('button, .btn, .card, .data-row, .sidebar-link')) {
+      if (e.target instanceof Element && e.target.matches('button, .btn, .card, .data-row, .sidebar-link')) {
         this.createAdvancedRipple(e)
       }
     })
 
     // Magnetic hover effect for buttons
     document.addEventListener('mousemove', (e) => {
-      if (e.target.matches('.btn, .nav-btn')) {
+      if (e.target instanceof Element && e.target.matches('.btn, .nav-btn')) {
         const rect = e.target.getBoundingClientRect()
         const x = e.clientX - rect.left - rect.width / 2
         const y = e.clientY - rect.top - rect.height / 2
@@ -155,14 +155,14 @@ class CRMApp {
     })
 
     document.addEventListener('mouseleave', (e) => {
-      if (e.target.matches('.btn, .nav-btn')) {
+      if (e.target instanceof Element && e.target.matches('.btn, .nav-btn')) {
         e.target.style.transform = 'translate(0px, 0px) scale(1)'
       }
     })
 
     // Enhanced card hover animations
     document.addEventListener('mouseover', (e) => {
-      if (e.target.matches('.card, .data-row, .stat-card, .deal-card, .task-card, .account-card, .product-card')) {
+      if (e.target instanceof Element && e.target.matches('.card, .data-row, .stat-card, .deal-card, .task-card, .account-card, .product-card')) {
         e.target.style.transform = 'translateY(-8px) scale(1.02)'
         e.target.style.boxShadow = '0 20px 40px rgba(0, 168, 107, 0.15)'
         e.target.style.borderColor = 'var(--primary-green)'
@@ -170,7 +170,7 @@ class CRMApp {
     })
 
     document.addEventListener('mouseout', (e) => {
-      if (e.target.matches('.card, .data-row, .stat-card, .deal-card, .task-card, .account-card, .product-card')) {
+      if (e.target instanceof Element && e.target.matches('.card, .data-row, .stat-card, .deal-card, .task-card, .account-card, .product-card')) {
         e.target.style.transform = 'translateY(0) scale(1)'
         e.target.style.boxShadow = 'var(--shadow-md)'
         e.target.style.borderColor = 'var(--border-color)'
