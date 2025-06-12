@@ -19,9 +19,11 @@ class CRMApp {
     this.mouse = { x: 0, y: 0 }
     this.particles = []
     this.animationFrame = null
+    this.chatbotOpen = false
     
     this.initializeEventListeners()
     this.initializeAdvancedAnimations()
+    this.initializeChatbot()
     this.loadSection('modules')
     this.hideLoading()
   }
@@ -35,6 +37,15 @@ class CRMApp {
         this.loadSection(section)
         this.setActiveNav(btn)
         this.createNavClickEffect(e)
+      })
+
+      // Add micro-interactions to nav buttons
+      btn.addEventListener('mouseenter', (e) => {
+        this.addMicroInteraction(e.target, 'micro-glow')
+      })
+
+      btn.addEventListener('mouseleave', (e) => {
+        this.removeMicroInteraction(e.target, 'micro-glow')
       })
     })
 
@@ -74,6 +85,9 @@ class CRMApp {
     
     // Keyboard interactions
     this.initializeKeyboardInteractions()
+
+    // Enhanced click interactions
+    this.initializeEnhancedClickInteractions()
   }
 
   initializeAdvancedAnimations() {
@@ -91,6 +105,179 @@ class CRMApp {
     
     // Morphing animations
     this.addMorphingAnimations()
+  }
+
+  initializeChatbot() {
+    // Create chatbot HTML
+    const chatbotHTML = `
+      <div class="chatbot-container">
+        <button class="chatbot-button" id="chatbot-toggle">
+          💬
+        </button>
+        <div class="chatbot-popup" id="chatbot-popup">
+          <div class="chatbot-header">
+            <div class="chatbot-title">
+              🤖 CRM Assistant
+            </div>
+            <button class="chatbot-close" id="chatbot-close">×</button>
+          </div>
+          <div class="chatbot-content">
+            <div class="chatbot-welcome">
+              <h3>How can I help you today?</h3>
+              <p>Choose a topic below or ask me anything about your CRM!</p>
+            </div>
+            <div class="chatbot-queries">
+              <button class="query-button" data-query="sales">
+                📊 How to track sales performance?
+              </button>
+              <button class="query-button" data-query="leads">
+                🎯 Managing leads effectively
+              </button>
+              <button class="query-button" data-query="reports">
+                📈 Creating custom reports
+              </button>
+              <button class="query-button" data-query="automation">
+                ⚡ Setting up automation
+              </button>
+            </div>
+            <div class="chatbot-response" id="chatbot-response"></div>
+          </div>
+        </div>
+      </div>
+    `
+
+    // Add chatbot to the page
+    document.body.insertAdjacentHTML('beforeend', chatbotHTML)
+
+    // Add event listeners
+    const chatbotToggle = document.getElementById('chatbot-toggle')
+    const chatbotPopup = document.getElementById('chatbot-popup')
+    const chatbotClose = document.getElementById('chatbot-close')
+    const queryButtons = document.querySelectorAll('.query-button')
+
+    chatbotToggle.addEventListener('click', () => {
+      this.toggleChatbot()
+    })
+
+    chatbotClose.addEventListener('click', () => {
+      this.closeChatbot()
+    })
+
+    queryButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const query = e.target.dataset.query
+        this.handleChatbotQuery(query)
+        this.addMicroInteraction(e.target, 'micro-bounce')
+      })
+    })
+
+    // Add micro-interactions to chatbot elements
+    chatbotToggle.addEventListener('mouseenter', () => {
+      this.addMicroInteraction(chatbotToggle, 'micro-rotate')
+    })
+
+    queryButtons.forEach(button => {
+      button.addEventListener('mouseenter', (e) => {
+        this.addMicroInteraction(e.target, 'micro-glow')
+      })
+      button.addEventListener('mouseleave', (e) => {
+        this.removeMicroInteraction(e.target, 'micro-glow')
+      })
+    })
+  }
+
+  toggleChatbot() {
+    const popup = document.getElementById('chatbot-popup')
+    this.chatbotOpen = !this.chatbotOpen
+    
+    if (this.chatbotOpen) {
+      popup.classList.add('show')
+      this.createParticleExplosion(document.getElementById('chatbot-toggle'))
+    } else {
+      popup.classList.remove('show')
+    }
+  }
+
+  closeChatbot() {
+    const popup = document.getElementById('chatbot-popup')
+    popup.classList.remove('show')
+    this.chatbotOpen = false
+  }
+
+  handleChatbotQuery(query) {
+    const responseDiv = document.getElementById('chatbot-response')
+    const responses = {
+      sales: {
+        title: "📊 Sales Performance Tracking",
+        content: `
+          <p>Here's how to effectively track your sales performance:</p>
+          <ul>
+            <li>Use the Analytics dashboard for real-time metrics</li>
+            <li>Set up custom KPIs and goals</li>
+            <li>Monitor conversion rates and pipeline health</li>
+            <li>Generate automated weekly/monthly reports</li>
+            <li>Track individual and team performance</li>
+          </ul>
+          <p>Navigate to <strong>Analytics > Sales Insight</strong> to get started!</p>
+        `
+      },
+      leads: {
+        title: "🎯 Lead Management Best Practices",
+        content: `
+          <p>Maximize your lead conversion with these strategies:</p>
+          <ul>
+            <li>Qualify leads using our scoring system</li>
+            <li>Set up automated follow-up sequences</li>
+            <li>Use tags and categories for organization</li>
+            <li>Track lead sources and campaign effectiveness</li>
+            <li>Implement lead nurturing workflows</li>
+          </ul>
+          <p>Check out <strong>Modules > Leads</strong> for detailed lead management tools!</p>
+        `
+      },
+      reports: {
+        title: "📈 Custom Report Creation",
+        content: `
+          <p>Create powerful custom reports in just a few steps:</p>
+          <ul>
+            <li>Choose from 50+ pre-built report templates</li>
+            <li>Customize data fields and filters</li>
+            <li>Set up automated report scheduling</li>
+            <li>Share reports with team members</li>
+            <li>Export to PDF, Excel, or CSV formats</li>
+          </ul>
+          <p>Visit <strong>Reports > All Reports</strong> to start building your custom reports!</p>
+        `
+      },
+      automation: {
+        title: "⚡ CRM Automation Setup",
+        content: `
+          <p>Streamline your workflow with smart automation:</p>
+          <ul>
+            <li>Email sequences for lead nurturing</li>
+            <li>Task assignment based on deal stages</li>
+            <li>Automatic data entry and updates</li>
+            <li>Trigger-based notifications and alerts</li>
+            <li>Integration with external tools and apps</li>
+          </ul>
+          <p>Explore <strong>Marketplace > Automation Tools</strong> to set up your workflows!</p>
+        `
+      }
+    }
+
+    const response = responses[query]
+    if (response) {
+      responseDiv.innerHTML = `
+        <h4>${response.title}</h4>
+        ${response.content}
+      `
+      responseDiv.classList.add('show')
+      
+      // Add animation to response
+      setTimeout(() => {
+        this.addMicroInteraction(responseDiv, 'micro-bounce')
+      }, 100)
+    }
   }
 
   loadSection(sectionName) {
@@ -123,6 +310,7 @@ class CRMApp {
       this.animateNewContent()
       this.addContentSpecificAnimations()
       this.initializeScrollAnimations()
+      this.addEnhancedMicroInteractions()
     })
     
     setTimeout(() => {
@@ -291,6 +479,142 @@ class CRMApp {
         this.buttonReleaseAnimation(e.target)
       }
     })
+  }
+
+  addEnhancedMicroInteractions() {
+    // Add micro-interactions to all interactive elements
+    const interactiveElements = document.querySelectorAll('button, .btn, .card, .sidebar-link, .nav-btn, .data-row')
+    
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', (e) => {
+        this.addMicroInteraction(e.target, 'micro-glow')
+      })
+
+      element.addEventListener('mouseleave', (e) => {
+        this.removeMicroInteraction(e.target, 'micro-glow')
+      })
+
+      element.addEventListener('click', (e) => {
+        this.addMicroInteraction(e.target, 'micro-bounce')
+        this.createParticleExplosion(e.target)
+      })
+    })
+
+    // Add special interactions for specific elements
+    const statCards = document.querySelectorAll('.stat-card')
+    statCards.forEach(card => {
+      card.addEventListener('mouseenter', (e) => {
+        this.addMicroInteraction(e.target, 'heartbeat')
+      })
+      card.addEventListener('mouseleave', (e) => {
+        this.removeMicroInteraction(e.target, 'heartbeat')
+      })
+    })
+  }
+
+  addMicroInteraction(element, className) {
+    element.classList.add(className)
+  }
+
+  removeMicroInteraction(element, className) {
+    element.classList.remove(className)
+  }
+
+  createParticleExplosion(element) {
+    const rect = element.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    
+    for (let i = 0; i < 12; i++) {
+      const particle = document.createElement('div')
+      particle.style.position = 'fixed'
+      particle.style.left = `${centerX}px`
+      particle.style.top = `${centerY}px`
+      particle.style.width = '6px'
+      particle.style.height = '6px'
+      particle.style.background = `hsl(${Math.random() * 60 + 140}, 70%, 60%)`
+      particle.style.borderRadius = '50%'
+      particle.style.pointerEvents = 'none'
+      particle.style.zIndex = '9999'
+      
+      const angle = (i / 12) * Math.PI * 2
+      const velocity = 80 + Math.random() * 40
+      const vx = Math.cos(angle) * velocity
+      const vy = Math.sin(angle) * velocity
+      
+      document.body.appendChild(particle)
+      
+      let x = 0, y = 0, opacity = 1, scale = 1
+      const animate = () => {
+        x += vx * 0.02
+        y += vy * 0.02 + 0.8 // gravity
+        opacity -= 0.025
+        scale -= 0.02
+        
+        particle.style.transform = `translate(${x}px, ${y}px) scale(${scale})`
+        particle.style.opacity = opacity
+        
+        if (opacity > 0 && scale > 0) {
+          requestAnimationFrame(animate)
+        } else {
+          particle.remove()
+        }
+      }
+      
+      requestAnimationFrame(animate)
+    }
+  }
+
+  initializeEnhancedClickInteractions() {
+    // Add enhanced click effects to all clickable elements
+    document.addEventListener('click', (e) => {
+      if (e.target instanceof Element) {
+        // Create ripple effect
+        if (e.target.matches('button, .btn, .card, .sidebar-link, .nav-btn')) {
+          this.createEnhancedRipple(e)
+        }
+
+        // Add bounce effect to important buttons
+        if (e.target.matches('.btn-primary, .btn-accent')) {
+          this.addMicroInteraction(e.target, 'elastic')
+          setTimeout(() => {
+            this.removeMicroInteraction(e.target, 'elastic')
+          }, 1000)
+        }
+
+        // Add shake effect to error/warning buttons
+        if (e.target.matches('.btn-outline')) {
+          this.addMicroInteraction(e.target, 'micro-shake')
+          setTimeout(() => {
+            this.removeMicroInteraction(e.target, 'micro-shake')
+          }, 500)
+        }
+      }
+    })
+  }
+
+  createEnhancedRipple(event) {
+    const element = event.currentTarget
+    const circle = document.createElement('span')
+    const diameter = Math.max(element.clientWidth, element.clientHeight)
+    const radius = diameter / 2
+
+    circle.style.width = circle.style.height = `${diameter}px`
+    circle.style.left = `${event.clientX - element.offsetLeft - radius}px`
+    circle.style.top = `${event.clientY - element.offsetTop - radius}px`
+    circle.classList.add('advanced-ripple')
+
+    const ripple = element.getElementsByClassName('advanced-ripple')[0]
+    if (ripple) {
+      ripple.remove()
+    }
+
+    element.appendChild(circle)
+
+    // Remove ripple after animation
+    setTimeout(() => {
+      circle.remove()
+    }, 800)
   }
 
   applyMagneticEffect(element, event) {
@@ -624,6 +948,12 @@ class CRMApp {
             this.animateKeyboardShortcut('analytics')
             break
         }
+      }
+
+      // Chatbot toggle with space key
+      if (e.key === ' ' && e.ctrlKey) {
+        e.preventDefault()
+        this.toggleChatbot()
       }
     })
   }
