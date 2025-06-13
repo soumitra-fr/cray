@@ -4,6 +4,7 @@ import { ReportsSection } from './components/reports.js'
 import { AnalyticsSection } from './components/analytics.js'
 import { RequestsSection } from './components/requests.js'
 import { MarketplaceSection } from './components/marketplace.js'
+import { RelationshipIntelligenceSection } from './components/relationship-intelligence.js'
 
 class CRMApp {
   constructor() {
@@ -13,7 +14,8 @@ class CRMApp {
       reports: new ReportsSection(),
       analytics: new AnalyticsSection(),
       requests: new RequestsSection(),
-      marketplace: new MarketplaceSection()
+      marketplace: new MarketplaceSection(),
+      'relationship-intelligence': new RelationshipIntelligenceSection()
     }
     
     this.mouse = { x: 0, y: 0 }
@@ -946,6 +948,11 @@ class CRMApp {
             e.preventDefault()
             this.loadSection('analytics')
             this.animateKeyboardShortcut('analytics')
+            break
+          case '4':
+            e.preventDefault()
+            this.loadSection('relationship-intelligence')
+            this.animateKeyboardShortcut('relationship-intelligence')
             break
         }
       }
